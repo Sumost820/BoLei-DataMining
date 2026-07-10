@@ -28,7 +28,7 @@ from scipy.spatial import cKDTree
 
 
 # ===== 路径配置 =====
-SCRIPT_DIR = Path(__file__).resolve().parent
+SCRIPT_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = SCRIPT_DIR.parent if SCRIPT_DIR.name.lower() == "src" else SCRIPT_DIR
 DEFAULT_INPUT = PROJECT_ROOT / "data" / "GPSdata"
 DEFAULT_OUTPUT = PROJECT_ROOT / "target"

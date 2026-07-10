@@ -6,7 +6,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 import folium
 
 # # 获取当前脚本所在目录
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = Path(__file__).parent.parent.parent
 RESOURCE_FILE = BASE_DIR / 'data' / 'MapResource.json'
 
 # 抽稀参数：数值越大越精细，HTML 越大
