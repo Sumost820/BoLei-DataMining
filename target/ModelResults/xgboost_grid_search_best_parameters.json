@@ -1,0 +1,18 @@
+{
+  "time_best_params": {
+    "colsample_bytree": 1.0,
+    "learning_rate": 0.1,
+    "max_depth": 4,
+    "n_estimators": 240,
+    "subsample": 0.8
+  },
+  "time_best_cv_rmse": 39.071282783673155,
+  "energy_best_params": {
+    "colsample_bytree": 0.8,
+    "learning_rate": 0.03,
+    "max_depth": 3,
+    "n_estimators": 240,
+    "subsample": 0.8
+  },
+  "energy_best_cv_rmse": 0.7121723657784946
+}

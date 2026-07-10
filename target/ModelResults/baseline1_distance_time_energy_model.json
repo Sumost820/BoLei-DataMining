@@ -1,0 +1,15 @@
+{
+  "model_name": "distance_proportional_time_and_energy_baseline",
+  "distance_feature": "total_distance_odometer_m",
+  "time": {
+    "formula": "predicted_task_duration_s = time_coefficient_s_per_m * total_distance_odometer_m",
+    "time_coefficient_s_per_m": 0.30073916556705016,
+    "time_coefficient_s_per_km": 300.7391655670502
+  },
+  "energy": {
+    "formula": "predicted_energy_soc_pct = energy_coefficient_soc_pct_per_m * total_distance_odometer_m",
+    "energy_coefficient_soc_pct_per_m": 0.003778059392895376,
+    "energy_coefficient_soc_pct_per_km": 3.7780593928953756
+  },
+  "train_sample_count": 875
+}
