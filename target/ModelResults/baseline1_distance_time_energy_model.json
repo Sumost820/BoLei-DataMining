@@ -3,13 +3,13 @@
   "distance_feature": "total_distance_odometer_m",
   "time": {
     "formula": "predicted_task_duration_s = time_coefficient_s_per_m * total_distance_odometer_m",
-    "time_coefficient_s_per_m": 0.30073916556705016,
-    "time_coefficient_s_per_km": 300.7391655670502
+    "time_coefficient_s_per_m": 0.3076676436207144,
+    "time_coefficient_s_per_km": 307.66764362071444
   },
   "energy": {
     "formula": "predicted_energy_soc_pct = energy_coefficient_soc_pct_per_m * total_distance_odometer_m",
-    "energy_coefficient_soc_pct_per_m": 0.003778059392895376,
-    "energy_coefficient_soc_pct_per_km": 3.7780593928953756
+    "energy_coefficient_soc_pct_per_m": 0.0037272484594916733,
+    "energy_coefficient_soc_pct_per_km": 3.7272484594916735
   },
-  "train_sample_count": 875
+  "train_sample_count": 2568
 }
