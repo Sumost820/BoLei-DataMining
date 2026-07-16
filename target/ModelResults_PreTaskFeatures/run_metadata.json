@@ -1,0 +1,31 @@
+{
+  "data_file": "C:\\Users\\14993\\PycharmProjects\\BoLei-DataMining\\data\\任务特征和标签_20米.json",
+  "sample_count": 3193,
+  "train_count": 2554,
+  "test_count": 639,
+  "train_start_time": "2026-06-08 00:01:03.574000",
+  "train_end_time": "2026-07-04 06:25:38.001000",
+  "test_start_time": "2026-07-04 06:25:58.011000",
+  "test_end_time": "2026-07-07 23:03:05.110000",
+  "feature_columns": [
+    "straight_line_distance_m",
+    "planned_total_distance_m",
+    "endpoint_altitude_change_m",
+    "planned_slope_mean",
+    "planned_slope_std",
+    "planned_cumulative_ascent_m",
+    "planned_cumulative_descent_m",
+    "vehicle_prev1_duration_sec",
+    "similar_task_actual_distance_km",
+    "similar_task_duration_min",
+    "similar_task_energy_soc_delta_pct",
+    "similar_top3_duration_mean_sec",
+    "similar_top3_od_distance_mean_m",
+    "fleet_prev60m_speed_mean",
+    "fleet_prev60m_speed_min"
+  ],
+  "time_target": "task_duration_min",
+  "energy_target": "total_energy_soc_delta_pct",
+  "fast_mode": true,
+  "search_cv_splits": 4
+}
