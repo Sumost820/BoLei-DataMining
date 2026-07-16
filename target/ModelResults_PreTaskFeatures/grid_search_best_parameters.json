@@ -1,0 +1,82 @@
+{
+  "XGBoost": {
+    "time_best_params": {
+      "model__learning_rate": 0.03,
+      "model__max_depth": 3,
+      "model__n_estimators": 400,
+      "model__subsample": 1.0
+    },
+    "time_best_cv_rmse_min": 2.062008761848639,
+    "energy_best_params": {
+      "model__learning_rate": 0.03,
+      "model__max_depth": 3,
+      "model__n_estimators": 200,
+      "model__subsample": 0.8
+    },
+    "energy_best_cv_rmse_soc_pct": 1.0123920023139472
+  },
+  "线性回归 + XGBoost残差": {
+    "time_best_params": {
+      "model__learning_rate": 0.03,
+      "model__max_depth": 3,
+      "model__n_estimators": 200,
+      "model__subsample": 0.8
+    },
+    "time_best_cv_rmse_min": 1.9309171402236465,
+    "energy_best_params": {
+      "model__learning_rate": 0.03,
+      "model__max_depth": 3,
+      "model__n_estimators": 200,
+      "model__subsample": 0.8
+    },
+    "energy_best_cv_rmse_soc_pct": 0.812036964998877
+  },
+  "LightGBM": {
+    "time_best_params": {
+      "model__learning_rate": 0.03,
+      "model__min_child_samples": 20,
+      "model__n_estimators": 200,
+      "model__num_leaves": 31
+    },
+    "time_best_cv_rmse_min": 2.0967832270066973,
+    "energy_best_params": {
+      "model__learning_rate": 0.03,
+      "model__min_child_samples": 20,
+      "model__n_estimators": 200,
+      "model__num_leaves": 15
+    },
+    "energy_best_cv_rmse_soc_pct": 1.045826427424206
+  },
+  "HGBR": {
+    "time_best_params": {
+      "model__l2_regularization": 0.0,
+      "model__learning_rate": 0.03,
+      "model__max_iter": 200,
+      "model__max_leaf_nodes": 15
+    },
+    "time_best_cv_rmse_min": 2.1329041871759955,
+    "energy_best_params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.03,
+      "model__max_iter": 200,
+      "model__max_leaf_nodes": 15
+    },
+    "energy_best_cv_rmse_soc_pct": 1.0629377020327846
+  },
+  "随机森林": {
+    "time_best_params": {
+      "model__max_depth": 12,
+      "model__max_features": 0.8,
+      "model__min_samples_leaf": 3,
+      "model__n_estimators": 300
+    },
+    "time_best_cv_rmse_min": 2.104094699174546,
+    "energy_best_params": {
+      "model__max_depth": 20,
+      "model__max_features": 0.8,
+      "model__min_samples_leaf": 1,
+      "model__n_estimators": 300
+    },
+    "energy_best_cv_rmse_soc_pct": 1.0274327390006504
+  }
+}

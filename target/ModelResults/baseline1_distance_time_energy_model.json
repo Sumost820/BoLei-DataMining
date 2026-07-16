@@ -2,9 +2,9 @@
   "model_name": "distance_proportional_time_and_energy_baseline",
   "distance_feature": "total_distance_odometer_m",
   "time": {
-    "formula": "predicted_task_duration_s = time_coefficient_s_per_m * total_distance_odometer_m",
-    "time_coefficient_s_per_m": 0.3076676436207144,
-    "time_coefficient_s_per_km": 307.66764362071444
+    "formula": "predicted_task_duration_min = time_coefficient_min_per_m * total_distance_odometer_m",
+    "time_coefficient_min_per_m": 0.005127794060345241,
+    "time_coefficient_min_per_km": 5.1277940603452405
   },
   "energy": {
     "formula": "predicted_energy_soc_pct = energy_coefficient_soc_pct_per_m * total_distance_odometer_m",

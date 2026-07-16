@@ -3,11 +3,11 @@
     "time_best_params": {
       "colsample_bytree": 1.0,
       "learning_rate": 0.1,
-      "max_depth": 5,
+      "max_depth": 4,
       "n_estimators": 300,
       "subsample": 0.9
     },
-    "time_best_cv_rmse": 35.85990538511378,
+    "time_best_cv_rmse": 0.5949280560827879,
     "energy_best_params": {
       "colsample_bytree": 0.8,
       "learning_rate": 0.05,
@@ -25,7 +25,7 @@
       "n_estimators": 300,
       "num_leaves": 15
     },
-    "time_best_cv_rmse": 38.39139338456737,
+    "time_best_cv_rmse": 0.6398565514785571,
     "energy_best_params": {
       "colsample_bytree": 0.8,
       "learning_rate": 0.03,
@@ -43,7 +43,7 @@
       "max_leaf_nodes": 15,
       "min_samples_leaf": 10
     },
-    "time_best_cv_rmse": 38.873267559503475,
+    "time_best_cv_rmse": 0.6477075676675152,
     "energy_best_params": {
       "l2_regularization": 0.1,
       "learning_rate": 0.05,
@@ -61,7 +61,7 @@
       "min_samples_split": 2,
       "n_estimators": 300
     },
-    "time_best_cv_rmse": 40.93690186011284,
+    "time_best_cv_rmse": 0.679348714304909,
     "energy_best_params": {
       "max_depth": null,
       "max_features": 0.8,
