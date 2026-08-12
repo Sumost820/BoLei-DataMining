@@ -12,16 +12,14 @@
 2. planned_total_distance_m
    LanePlanner 规划结果 metrics.total_distance_m。
 3. endpoint_altitude_change_m
-   使用 RouteSampler 的 GPS 海拔近邻查询器分别查询起终点海拔，
-   再计算终点海拔 - 起点海拔。
+   使用 RouteSampler 的 GPS 海拔近邻查询器分别查询起终点海拔，再计算终点海拔 - 起点海拔。
 4. planned_slope_mean
 5. planned_slope_std
    使用 RouteSampler 对规划路径离散采样，并用同一个 GPS 海拔查询器
    获取采样点海拔，再计算相邻高程差 / 路径距离差。
 6. planned_cumulative_ascent_m
 7. planned_cumulative_descent_m
-   在平滑后的规划路径海拔序列上，将相邻点正高程差累加为累计上升，
-   将负高程差的绝对值累加为累计下降。
+   在平滑后的规划路径海拔序列上，将相邻点正高程差累加为累计上升，将负高程差的绝对值累加为累计下降。
 8. vehicle_prev5_gps_speed_mean
    同一车辆最近 5 个已完成任务的全部有效 GPS speed 记录合并求均值。
 9. similar_task_gps_speed_mean
@@ -86,22 +84,24 @@ from RouteSampler import make_gps_altitude_estimator, sample_route_records
 # 1. 配置区：运行前修改这里
 # =============================================================================
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
 # 原始任务 JSON 所在目录。目录中可放多辆车的 JSON 文件。
 # JSON 顶层可以是任务列表，也可以是 {"tasks": [...]}。
-TASK_DATA_DIR = Path(r"C:\Users\14993\PycharmProjects\BoLei-DataMining\data\GPSdata")
+TASK_DATA_DIR = PROJECT_ROOT / "data" / "GPSdata"
 TASK_FILE_GLOB = "*.json"
 
 # LanePlanner 使用的车道资源文件。
-MAP_RESOURCE_FILE = Path(r"C:\Users\14993\PycharmProjects\BoLei-DataMining\data\MapResource.json")
+MAP_RESOURCE_FILE = PROJECT_ROOT / "data" / "MapResource.json"
 
 # 输出文件：一个 JSON 数组，每个对象对应一个任务。
-OUTPUT_JSON = Path(r"C:\Users\14993\PycharmProjects\BoLei-DataMining\data\任务特征和标签_20米_去除暂停时间.json")
+OUTPUT_JSON = PROJECT_ROOT / "data" / "任务特征和标签_20米_去除暂停时间.json"
 
 # RouteSampler 使用的 GPS 数据目录。
 # 这不是额外的海拔文件，而是直接交给 RouteSampler.make_gps_altitude_estimator()：
 # 其内部会调用 load_gps_altitude_points()，读取目录下任务 JSON 的
 # rt_message.longitude / latitude / altitude，并按空间近邻查询海拔。
-ROUTE_SAMPLER_GPS_DATA_DIR = Path(r"C:\Users\14993\PycharmProjects\BoLei-DataMining\data\GPSdata")
+ROUTE_SAMPLER_GPS_DATA_DIR = PROJECT_ROOT / "data" / "GPSdata"
 GPS_ALTITUDE_MAX_DISTANCE_M = 60.0
 GPS_ALTITUDE_NEIGHBORS = 8
 
@@ -285,8 +285,7 @@ def first_last_soc(
     messages: Sequence[Tuple[datetime, Dict[str, Any]]],
 ) -> Tuple[Optional[float], Optional[float]]:
     valid_soc = [
-        soc
-        for _, message in messages
+        soc for _, message in messages
         if (soc := finite_float(message.get("soc"))) is not None
     ]
 
@@ -299,12 +298,10 @@ def first_last_odometer(
     messages: Sequence[Tuple[datetime, Dict[str, Any]]],
 ) -> Tuple[Optional[float], Optional[float]]:
     """提取按时间排序后的第一条和最后一条有效 odometer。
-
     当前数据中的 odometer 按 km 使用，因此差值单位也是 km。
     """
     valid_odometer = [
-        odometer
-        for _, message in messages
+        odometer for _, message in messages
         if (odometer := finite_float(message.get("odometer"))) is not None
     ]
 
@@ -338,40 +335,25 @@ def speed_summary(
         values.append(speed)
 
     if not values:
-        return (
-            0.0,
-            0,
-            None,
-            np.empty(0, dtype=np.int64),
-            np.empty(0, dtype=float),
-        )
+        return (0.0, 0, None, np.empty(0, dtype=np.int64), np.empty(0, dtype=float))
 
     value_array = np.asarray(values, dtype=float)
     timestamp_array = np.asarray(timestamps_us, dtype=np.int64)
     value_sum = float(np.sum(value_array))
     value_count = int(value_array.size)
 
-    return (
-        value_sum,
-        value_count,
-        value_sum / value_count,
-        timestamp_array,
-        value_array,
-    )
+    return value_sum, value_count, value_sum / value_count, timestamp_array, value_array
 
 
 def active_duration_seconds(
     messages: Sequence[Tuple[datetime, Dict[str, Any]]],
-    pause_speed_threshold: float = PAUSE_SPEED_THRESHOLD,
-) -> Optional[float]:
+    pause_speed_threshold: float = PAUSE_SPEED_THRESHOLD) -> Optional[float]:
     """计算扣除低速暂停区间后的任务时长。
-
     messages 已按 received_at 升序排列。对于相邻记录 i 和 i+1，
     使用第 i 条记录的 speed 表示区间 [time_i, time_{i+1}) 的状态：
     - speed < pause_speed_threshold：暂停，该区间不计时；
     - speed >= pause_speed_threshold：行驶，该区间计时；
     - speed 缺失或无效：不额外判定为暂停，保持原有计时口径。
-
     无 GPS 记录时返回 None；仅有一条记录时返回 0.0。
     """
     if not messages:
@@ -398,22 +380,12 @@ def active_duration_seconds(
     return active_seconds
 
 
-def normalize_task(
-    raw_task: Dict[str, Any],
-    source_file: Path,
-    source_index: int,
-) -> Dict[str, Any]:
+def normalize_task(raw_task: Dict[str, Any], source_file: Path, source_index: int) -> Dict[str, Any]:
     messages = sort_valid_messages(raw_task)
     start_coord, end_coord = first_last_coordinate(messages)
     start_soc, end_soc = first_last_soc(messages)
     start_odometer, end_odometer = first_last_odometer(messages)
-    (
-        speed_sum,
-        speed_count,
-        speed_mean,
-        speed_times_us,
-        speed_values,
-    ) = speed_summary(messages)
+    speed_sum, speed_count, speed_mean, speed_times_us, speed_values = speed_summary(messages)
 
     gps_start_time = messages[0][0] if messages else None
     gps_end_time = messages[-1][0] if messages else None
@@ -615,11 +587,8 @@ def calculate_slope_features(records: Sequence[Dict[str, Any]]) -> Dict[str, Any
     }
 
 
-def query_endpoint_altitude(
-    longitude: float,
-    latitude: float,
-    altitude_provider,
-) -> Tuple[Optional[float], Optional[str], Optional[float]]:
+def query_endpoint_altitude(longitude: float, latitude: float, altitude_provider) \
+        -> Tuple[Optional[float], Optional[str], Optional[float]]:
     if altitude_provider is None:
         return None, None, None
 
@@ -631,12 +600,9 @@ def query_endpoint_altitude(
     )
 
 
-def first_last_sample_altitude(
-    records: Sequence[Dict[str, Any]],
-) -> Tuple[Optional[float], Optional[float]]:
+def first_last_sample_altitude(records: Sequence[Dict[str, Any]]) -> Tuple[Optional[float], Optional[float]]:
     valid_altitudes = [
-        altitude
-        for record in records
+        altitude for record in records
         if (altitude := finite_float(record.get("altitude_m"))) is not None
     ]
     if not valid_altitudes:
@@ -644,11 +610,7 @@ def first_last_sample_altitude(
     return valid_altitudes[0], valid_altitudes[-1]
 
 
-def construct_route_features(
-    task: Dict[str, Any],
-    planner: LanePlanner,
-    altitude_provider,
-) -> Dict[str, Any]:
+def construct_route_features(task: Dict[str, Any], planner: LanePlanner, altitude_provider) -> Dict[str, Any]:
     required = (
         task.get("start_longitude"),
         task.get("start_latitude"),
@@ -759,11 +721,8 @@ def empty_route_features(error: str) -> Dict[str, Any]:
 # =============================================================================
 
 
-def build_fleet_speed_index(
-    tasks: Sequence[Dict[str, Any]],
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """建立按 GPS 时间排序的全车队速度索引。
-
+def build_fleet_speed_index(tasks: Sequence[Dict[str, Any]]) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """建立按 GPS 时间排序的全车队速度索引
     返回：
     - sorted_times_us：每条有效 speed 对应的 GPS 时间，升序；
     - prefix_speed_sum：速度前缀和，长度比时间数组多 1；
@@ -778,21 +737,12 @@ def build_fleet_speed_index(
         times = task.pop("_gps_speed_times_us", None)
         speeds = task.pop("_gps_speed_values", None)
 
-        if (
-            isinstance(times, np.ndarray)
-            and isinstance(speeds, np.ndarray)
-            and times.size > 0
-            and times.size == speeds.size
-        ):
+        if isinstance(times, np.ndarray) and isinstance(speeds, np.ndarray) and times.size > 0 and times.size == speeds.size:
             time_chunks.append(times.astype(np.int64, copy=False))
             speed_chunks.append(speeds.astype(float, copy=False))
 
     if not time_chunks:
-        return (
-            np.empty(0, dtype=np.int64),
-            np.zeros(1, dtype=float),
-            np.empty(0, dtype=float),
-        )
+        return np.empty(0, dtype=np.int64), np.zeros(1, dtype=float), np.empty(0, dtype=float)
 
     all_times = np.concatenate(time_chunks)
     all_speeds = np.concatenate(speed_chunks)
@@ -847,10 +797,7 @@ def od_pair_distance_m(current: Dict[str, Any], history: Dict[str, Any]) -> floa
     current_end = make_point(current["end_longitude"], current["end_latitude"])
     history_end = make_point(history["end_longitude"], history["end_latitude"])
 
-    return float(
-        haversine_m(current_start, history_start)
-        + haversine_m(current_end, history_end)
-    )
+    return float(haversine_m(current_start, history_start) + haversine_m(current_end, history_end))
 
 
 def construct_history_features(
@@ -923,30 +870,22 @@ def construct_history_features(
 
     # 所有在当前任务开始前已经结束的历史任务。
     completed_all = [
-        task
-        for task in all_tasks
-        if task.get("gps_end_time") is not None
-        and task["gps_end_time"] < current_start
+        task for task in all_tasks
+        if task.get("gps_end_time") is not None and task["gps_end_time"] < current_start
     ]
 
     # 保持原有速度和相似任务逻辑：候选任务必须有有效 GPS speed。
     completed_with_speed = [
-        task
-        for task in completed_all
+        task for task in completed_all
         if int(task.get("gps_speed_count", 0)) > 0
     ]
 
     # 同一车辆最近 5 个已完成任务：合并全部 GPS speed 记录后求均值。
     same_vehicle_speed = [
-        task
-        for task in completed_with_speed
-        if str(task.get("transport_device_id"))
-        == str(current.get("transport_device_id"))
+        task for task in completed_with_speed
+        if str(task.get("transport_device_id")) == str(current.get("transport_device_id"))
     ]
-    same_vehicle_speed.sort(
-        key=lambda task: task["gps_end_time"],
-        reverse=True,
-    )
+    same_vehicle_speed.sort(key=lambda task: task["gps_end_time"], reverse=True)
     previous_speed_tasks = same_vehicle_speed[:PREVIOUS_VEHICLE_TASK_COUNT]
 
     previous_speed_mean = weighted_mean_from_sums(
@@ -959,34 +898,23 @@ def construct_history_features(
 
     # 同一车辆历史时长。只要求任务已完成且时长有效，不依赖 speed 字段。
     same_vehicle_duration = [
-        task
-        for task in completed_all
-        if str(task.get("transport_device_id"))
-        == str(current.get("transport_device_id"))
-        and task.get("gps_duration_sec") is not None
+        task for task in completed_all
+        if str(task.get("transport_device_id")) == str(current.get("transport_device_id")) and task.get("gps_duration_sec") is not None
     ]
     same_vehicle_duration.sort(
         key=lambda task: task["gps_end_time"],
         reverse=True,
     )
-    previous_duration_tasks = same_vehicle_duration[
-        :PREVIOUS_VEHICLE_TASK_COUNT
-    ]
+    previous_duration_tasks = same_vehicle_duration[:PREVIOUS_VEHICLE_TASK_COUNT]
     previous_durations_sec = [
         float(task["gps_duration_sec"])
         for task in previous_duration_tasks
     ]
 
-    vehicle_prev1_duration_sec = (
-        previous_durations_sec[0]
-        if previous_durations_sec
-        else None
-    )
+    vehicle_prev1_duration_sec = (previous_durations_sec[0] if previous_durations_sec else None)
     vehicle_prev5_duration_mean_sec = (
         float(np.mean(previous_durations_sec))
-        if previous_durations_sec
-        else None
-    )
+        if previous_durations_sec else None)
 
     vehicle_prev1_duration_min = (
         vehicle_prev1_duration_sec / 60.0
@@ -995,8 +923,7 @@ def construct_history_features(
     )
     vehicle_prev5_duration_mean_min = (
         vehicle_prev5_duration_mean_sec / 60.0
-        if vehicle_prev5_duration_mean_sec is not None
-        else None
+        if vehicle_prev5_duration_mean_sec is not None else None
     )
 
     # 不设时间窗口、不限制车辆；按起点距离 + 终点距离排序。
@@ -1109,18 +1036,10 @@ def construct_history_features(
     )
 
     if similar_top3_durations.size > 0:
-        similar_top3_duration_mean_sec = float(
-            np.mean(similar_top3_durations)
-        )
-        similar_top3_duration_median_sec = float(
-            np.median(similar_top3_durations)
-        )
-        similar_top3_duration_std_sec = float(
-            np.std(similar_top3_durations, ddof=0)
-        )
-        similar_top3_od_distance_mean_m = float(
-            np.mean([item[0] for item in similar_top3_items])
-        )
+        similar_top3_duration_mean_sec = float(np.mean(similar_top3_durations))
+        similar_top3_duration_median_sec = float(np.median(similar_top3_durations))
+        similar_top3_duration_std_sec = float(np.std(similar_top3_durations, ddof=0))
+        similar_top3_od_distance_mean_m = float(np.mean([item[0] for item in similar_top3_items]))
     else:
         similar_top3_duration_mean_sec = None
         similar_top3_duration_median_sec = None
@@ -1129,18 +1048,15 @@ def construct_history_features(
 
     similar_top3_duration_mean_min = (
         similar_top3_duration_mean_sec / 60.0
-        if similar_top3_duration_mean_sec is not None
-        else None
+        if similar_top3_duration_mean_sec is not None else None
     )
     similar_top3_duration_median_min = (
         similar_top3_duration_median_sec / 60.0
-        if similar_top3_duration_median_sec is not None
-        else None
+        if similar_top3_duration_median_sec is not None else None
     )
     similar_top3_duration_std_min = (
         similar_top3_duration_std_sec / 60.0
-        if similar_top3_duration_std_sec is not None
-        else None
+        if similar_top3_duration_std_sec is not None else None
     )
 
     return {
@@ -1170,13 +1086,11 @@ def construct_history_features(
         "similar_task_speed_record_count": similar_speed_record_count,
         "similar_task_od_distance_m": (
             float(np.mean([item[0] for item in selected]))
-            if selected
-            else None
+            if selected else None
         ),
         "similar_task_time_gap_min": (
             float(np.mean([item[1] / 60.0 for item in selected]))
-            if selected
-            else None
+            if selected else None
         ),
         "similar_task_source_task_ids": [
             item[2]["task_id"] for item in selected
@@ -1304,10 +1218,7 @@ def main() -> None:
 
     print("构建全车队 GPS 速度时间索引……")
     fleet_speed_index = build_fleet_speed_index(tasks)
-    print(
-        "有效 GPS speed 记录数："
-        f"{fleet_speed_index[0].size}"
-    )
+    print(f"有效 GPS speed 记录数：{fleet_speed_index[0].size}")
 
     print("[2/5] 初始化 LanePlanner……")
     planner_settings = deepcopy(DEFAULT_SETTINGS)
@@ -1317,9 +1228,7 @@ def main() -> None:
 
     print("[3/5] 初始化海拔查询器……")
     if not ROUTE_SAMPLER_GPS_DATA_DIR.exists():
-        raise FileNotFoundError(
-            f"RouteSampler GPS 数据目录不存在：{ROUTE_SAMPLER_GPS_DATA_DIR}"
-        )
+        raise FileNotFoundError(f"RouteSampler GPS 数据目录不存在：{ROUTE_SAMPLER_GPS_DATA_DIR}")
 
     altitude_provider = make_gps_altitude_estimator(
         gps_data_dir=ROUTE_SAMPLER_GPS_DATA_DIR,
@@ -1336,12 +1245,7 @@ def main() -> None:
     for index, task in enumerate(tasks, start=1):
         if all(
             task.get(field) is not None
-            for field in (
-                "start_longitude",
-                "start_latitude",
-                "end_longitude",
-                "end_latitude",
-            )
+            for field in ("start_longitude", "start_latitude", "end_longitude", "end_latitude")
         ):
             cache_key = route_cache_key(task)
             if cache_key in route_cache:
