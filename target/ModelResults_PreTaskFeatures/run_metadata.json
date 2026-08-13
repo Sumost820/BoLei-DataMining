@@ -1,5 +1,5 @@
 {
-  "data_file": "C:\\Users\\14993\\PycharmProjects\\BoLei-DataMining\\data\\任务特征和标签_20米.json",
+  "data_file": "C:\\Users\\14993\\PycharmProjects\\BoLei-DataMining\\data\\任务特征和标签_20米_去除暂停时间.json",
   "sample_count": 3193,
   "train_count": 2554,
   "test_count": 639,
