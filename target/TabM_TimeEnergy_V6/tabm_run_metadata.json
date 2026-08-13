@@ -1,0 +1,65 @@
+{
+  "data_file": "C:\\Users\\Justin.Lv\\Desktop\\BoLei-DataMining\\data\\任务特征和标签_20米_特征扩充.json",
+  "output_dir": "C:\\Users\\Justin.Lv\\Desktop\\BoLei-DataMining\\target\\TabM_TimeEnergy_V6",
+  "base_sample_count": 3193,
+  "time_sample_count": 3193,
+  "energy_sample_count": 3193,
+  "time_train_count": 2554,
+  "time_test_count": 639,
+  "energy_train_count": 2554,
+  "energy_test_count": 639,
+  "time_feature_columns": [
+    "straight_line_distance_m",
+    "planned_total_distance_m",
+    "planned_to_straight_distance_ratio",
+    "endpoint_altitude_change_m",
+    "planned_slope_mean",
+    "planned_cumulative_ascent_m",
+    "planned_cumulative_descent_m",
+    "vehicle_recent10_duration_mean_sec",
+    "vehicle_time_gap_since_prev_task_min",
+    "vehicle_similar_top5_duration_mean_sec",
+    "similar_top5_duration_mean_sec",
+    "similar_top5_duration_std_sec",
+    "similar_nearest_od_distance_m",
+    "similar_nearest_time_gap_min"
+  ],
+  "energy_feature_columns": [
+    "straight_line_distance_m",
+    "planned_total_distance_m",
+    "planned_to_straight_distance_ratio",
+    "endpoint_altitude_change_m",
+    "planned_slope_mean",
+    "planned_cumulative_ascent_m",
+    "planned_cumulative_descent_m",
+    "vehicle_recent5_energy_mean_pct",
+    "vehicle_time_gap_since_prev_task_min",
+    "vehicle_similar_top5_energy_mean_pct",
+    "similar_top5_energy_mean_pct",
+    "similar_top5_energy_std_pct",
+    "similar_nearest_od_distance_m",
+    "similar_nearest_time_gap_min"
+  ],
+  "device": "cpu",
+  "tabm_config": {
+    "arch_type": "tabm",
+    "n_blocks": 2,
+    "d_block": 128,
+    "dropout": 0.1,
+    "k": 16
+  },
+  "time_best_epoch": 63,
+  "energy_best_epoch": 36,
+  "time_metrics": {
+    "MAE": 0.5574790702258667,
+    "RMSE": 0.9251315809920204,
+    "R2": 0.9024666078434991,
+    "Within10%": 0.974960876369327
+  },
+  "energy_metrics": {
+    "MAE": 0.594910074810094,
+    "RMSE": 0.7673418922757069,
+    "R2": 0.9350188282994025,
+    "Within10%": 0.9311424100156495
+  }
+}

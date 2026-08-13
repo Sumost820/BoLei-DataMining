@@ -1,6 +1,6 @@
 {
-  "data_file": "C:\\Users\\14993\\PycharmProjects\\BoLei-DataMining\\data\\任务特征和标签_20米_去除暂停时间.json",
-  "output_dir": "C:\\Users\\14993\\PycharmProjects\\BoLei-DataMining\\target\\TabM_Simple",
+  "data_file": "C:\\Users\\Justin.Lv\\Desktop\\BoLei-DataMining\\data\\任务特征和标签_20米_去除暂停时间.json",
+  "output_dir": "C:\\Users\\Justin.Lv\\Desktop\\BoLei-DataMining\\target\\TabM_Simple",
   "sample_count": 3193,
   "train_count": 2554,
   "test_count": 639,
@@ -30,15 +30,15 @@
     "k": 16
   },
   "time_best_epoch": 62,
-  "energy_best_epoch": 104,
+  "energy_best_epoch": 78,
   "time_metrics": {
-    "MAE": 0.5718878644597982,
-    "RMSE": 0.9305663784644665,
-    "R2": 0.9013172984117986
+    "MAE": 0.5709738723731002,
+    "RMSE": 0.9301113488885573,
+    "R2": 0.9014137828118246
   },
   "energy_metrics": {
-    "MAE": 0.6230862284676757,
-    "RMSE": 0.8125085023085807,
-    "R2": 0.9271439621730302
+    "MAE": 0.5932844159002411,
+    "RMSE": 0.7726267567470588,
+    "R2": 0.9341206646909145
   }
 }
