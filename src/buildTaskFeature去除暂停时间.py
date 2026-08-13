@@ -95,7 +95,7 @@ TASK_FILE_GLOB = "*.json"
 MAP_RESOURCE_FILE = PROJECT_ROOT / "data" / "MapResource.json"
 
 # 输出文件：一个 JSON 数组，每个对象对应一个任务。
-OUTPUT_JSON = PROJECT_ROOT / "data" / "任务特征和标签_20米_去除暂停时间.json"
+OUTPUT_JSON = PROJECT_ROOT / "data" / "任务特征和标签_1米_去除暂停时间.json"
 
 # RouteSampler 使用的 GPS 数据目录。
 # 这不是额外的海拔文件，而是直接交给 RouteSampler.make_gps_altitude_estimator()：
@@ -106,7 +106,7 @@ GPS_ALTITUDE_MAX_DISTANCE_M = 60.0
 GPS_ALTITUDE_NEIGHBORS = 8
 
 # 规划路径离散采样设置。
-ROUTE_SAMPLE_INTERVAL_M = 20.0
+ROUTE_SAMPLE_INTERVAL_M = 1.0
 MAX_ROUTE_SAMPLE_POINTS = 20_000_000
 
 # 对采样海拔做滚动中位数平滑，降低 GPS 高程噪声。
