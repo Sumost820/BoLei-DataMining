@@ -1,0 +1,5 @@
+{
+  "distance_feature": "planned_total_distance_m",
+  "time_coefficient_min_per_m": 0.004699289385729024,
+  "energy_coefficient_soc_pct_per_m": 0.0037885435005190074
+}

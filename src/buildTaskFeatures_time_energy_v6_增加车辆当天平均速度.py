@@ -6,7 +6,7 @@
 3. 历史任务严格要求 gps_end_time < current_start，避免未来信息泄漏；
 4. 最终监督目标只有任务时间和任务能耗；速度不作为预测目标；
 5. task_speed_mps 仅在特征构建内部作为“已完成历史任务”的中间量，用于增强时间预测；
-6. 时间模型使用 30 个特征，其中可包含历史速度特征；
+6. 时间模型使用 31 个特征，其中可包含历史速度特征；
 7. 能耗模型使用独立的 20 个特征，不使用速度派生特征；
 8. 所有历史特征严格使用当前任务开始前已完成任务，避免未来信息泄漏。
 
@@ -727,6 +727,7 @@ def construct_history_features(
         "vehicle_recent10_speed_mean_mps": None,
         "vehicle_recent10_speed_std_mps": None,
         "vehicle_recent10_duration_mean_sec": None,
+        "vehicle_today_speed_mean_mps": None,
         "vehicle_time_gap_since_prev_task_min": None,
         "vehicle_similar_top5_speed_mean_mps": None,
         "vehicle_similar_top5_duration_mean_sec": None,
@@ -794,6 +795,18 @@ def construct_history_features(
     result["vehicle_recent10_speed_std_mps"] = speed10[2]
     result["vehicle_recent10_duration_mean_sec"] = numeric_summary(
         task.get("gps_duration_sec") for task in recent10
+    )[0]
+
+    # 同车当天平均速度：只使用当前任务开始前已经结束、且开始于同一自然日的同车任务。
+    # history 已在上方严格限制 gps_end_time < current_start，因此不会使用当前任务
+    # 或当天后续任务，避免预测时发生未来信息泄漏。
+    same_vehicle_today = [
+        task for task in same_vehicle
+        if task.get("gps_start_time") is not None
+        and task["gps_start_time"].date() == current_start.date()
+    ]
+    result["vehicle_today_speed_mean_mps"] = numeric_summary(
+        task.get("gps_task_speed_mps") for task in same_vehicle_today
     )[0]
 
     # 同车近期能耗：均值描述近期基线，std描述稳定性，intensity消除任务距离尺度。
@@ -1033,7 +1046,7 @@ def build_output_record(
 
 
 # 时间与能耗使用不同特征集合。
-# 时间模型：保持 v3 的 30 个精简特征。
+# 时间模型：31 个精简特征。
 TIME_FEATURE_COLUMNS = [
     # 路线 / 地形：8
     "straight_line_distance_m",
@@ -1049,11 +1062,12 @@ TIME_FEATURE_COLUMNS = [
     "start_hour_sin",
     "start_hour_cos",
 
-    # 同车近期：6
+    # 同车近期 / 当天：7
     "vehicle_recent5_speed_mean_mps",
     "vehicle_recent10_speed_mean_mps",
     "vehicle_recent10_speed_std_mps",
     "vehicle_recent10_duration_mean_sec",
+    "vehicle_today_speed_mean_mps",
     "vehicle_time_gap_since_prev_task_min",
     "vehicle_history_task_count",
 
