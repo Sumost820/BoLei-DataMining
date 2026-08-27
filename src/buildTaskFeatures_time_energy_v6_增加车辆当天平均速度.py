@@ -50,7 +50,7 @@ from src.tools.RouteSampler import make_gps_altitude_estimator, sample_route_rec
 
 TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TASK_DATA_DIR = PROJECT_ROOT / "data" / TARGET_AREA / "GPSdata"
+TASK_DATA_DIR = PROJECT_ROOT / "data" / TARGET_AREA / "FinalData"
 TASK_FILE_GLOB = "*.json"
 MAP_RESOURCE_FILE = PROJECT_ROOT / "data" / TARGET_AREA / "MapResource.json"
 OUTPUT_JSON = PROJECT_ROOT / "data" / TARGET_AREA / f"任务特征和标签-{TARGET_AREA}.json"
@@ -77,7 +77,7 @@ SIMILAR_OD_WEIGHT_SCALE_M = 100.0
 SIMILAR_RECENCY_HALF_LIFE_DAYS = 7.0
 SIMILAR_TASK_MAX_OD_DISTANCE_M: Optional[float] = None
 
-FAIL_FAST = False
+FAIL_FAST = True
 SUPPRESS_PLANNER_DEBUG_OUTPUT = True
 ROUTE_CACHE_COORD_DECIMALS = 5
 
