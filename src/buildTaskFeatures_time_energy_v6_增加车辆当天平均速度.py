@@ -34,25 +34,26 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-from LanePlanner import (
+from src.tools.LanePlanner import (
     DEFAULT_SETTINGS,
     LanePlanner,
     haversine_m,
     load_lanes,
     make_point,
 )
-from RouteSampler import make_gps_altitude_estimator, sample_route_records
+from src.tools.RouteSampler import make_gps_altitude_estimator, sample_route_records
 
 
 # =============================================================================
 # 1. 配置
 # =============================================================================
 
+TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TASK_DATA_DIR = PROJECT_ROOT / "data" / "GPSdata"
+TASK_DATA_DIR = PROJECT_ROOT / "data" / TARGET_AREA / "GPSdata"
 TASK_FILE_GLOB = "*.json"
-MAP_RESOURCE_FILE = PROJECT_ROOT / "data" / "MapResource.json"
-OUTPUT_JSON = PROJECT_ROOT / "data" / "任务特征和标签_20米_特征扩充.json"
+MAP_RESOURCE_FILE = PROJECT_ROOT / "data" / TARGET_AREA / "MapResource.json"
+OUTPUT_JSON = PROJECT_ROOT / "data" / TARGET_AREA / f"任务特征和标签-{TARGET_AREA}.json"
 ROUTE_SAMPLER_GPS_DATA_DIR = TASK_DATA_DIR
 
 GPS_ALTITUDE_MAX_DISTANCE_M = 60.0

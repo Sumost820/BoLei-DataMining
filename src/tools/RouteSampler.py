@@ -1,28 +1,17 @@
-# -*- coding: utf-8 -*-
-"""路线采样工具。
-
-功能：
-1. 已有规划结果 plan -> 沿规划路径生成等距采样点；
-2. 起点/终点经纬度 -> 规划路径 -> 沿规划路径生成等距采样点；
-3. 采样点海拔优先使用 GPS 历史点近邻估算，避免 MapResource 中部分车道 z=0 导致海拔错误；
-4. 将采样点导出为 CSV 文本。
 """
-
+路线采样工具
+"""
 import csv
 import io
 import json
 import math
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
-
 import numpy as np
 
-try:
-    from scipy.spatial import cKDTree
-except Exception:
-    cKDTree = None
+from scipy.spatial import cKDTree
 
-from LanePlanner import (
+from src.tools.LanePlanner import (
     make_point,
     point_at_offset,
     polyline_length_m,

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 统一路线网页服务：
 1. 根据 SN + task_id 获取历史路径和规划路径；
@@ -23,7 +22,7 @@ import folium
 from folium.plugins import Fullscreen, MeasureControl, MiniMap
 from flask import Flask, Response, jsonify, render_template_string, request
 
-from LanePlanner import (
+from src.tools.LanePlanner import (
     DEFAULT_SETTINGS,
     LanePlanner,
     downsample_evenly,
@@ -31,28 +30,28 @@ from LanePlanner import (
     latlon_of,
     load_lanes,
     make_point,
-    polyline_length_m,
 )
-from MapRenderer import build_route_map
-from RouteSampler import (
+from src.tools.MapRenderer import build_route_map
+from src.tools.RouteSampler import (
     make_gps_altitude_estimator,
     plan_and_sample_by_coords,
     records_to_csv_text,
     sample_route_records,
 )
-from TaskData import determine_origin_destination, find_task
+from src.tools.TaskData import determine_origin_destination, find_task
 
 
 # =============================================================================
 # 配置
 # =============================================================================
 THIS_FILE = Path(__file__).resolve()
-PROJECT_ROOT = THIS_FILE.parent.parent if THIS_FILE.parent.name.lower() == "src" else THIS_FILE.parent
+PROJECT_ROOT = THIS_FILE.parent.parent
+TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
 
 APP_SETTINGS = {
     "project_root": PROJECT_ROOT,
-    "gps_data_dir": PROJECT_ROOT / "data" / "GPSdata",
-    "resource_file": PROJECT_ROOT / "data" / "MapResource.json",
+    "gps_data_dir": PROJECT_ROOT / "data" / TARGET_AREA / "GPSdata",
+    "resource_file": PROJECT_ROOT / "data" / TARGET_AREA / "MapResource.json",
     "host": "127.0.0.1",
     "port": 5000,
     "max_history_points": 5000,
