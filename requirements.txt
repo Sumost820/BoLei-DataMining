@@ -1,0 +1,41 @@
+# =============================================================================
+# BoLei-DataMining 项目依赖
+# 安装命令：pip install -r requirements.txt
+# =============================================================================
+
+# ----- 数值计算与数据处理 -----
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+
+# ----- 机器学习与建模 -----
+scikit-learn>=1.3
+joblib>=1.3
+xgboost>=2.0
+lightgbm>=4.0
+
+# ----- 深度学习 -----
+torch>=2.0
+tabm>=0.1.0
+
+# ----- 可视化 -----
+matplotlib==3.11.1
+matplotlib-inline>=0.1.6
+folium>=0.15
+
+# ----- Web 服务 -----
+flask>=2.3
+
+# =============================================================================
+# 说明
+# =============================================================================
+# 1. matplotlib 固定为 3.11.1：Notebook 中遇到过 backend_agg 损坏问题，
+#    若出现导入错误可执行：
+#    pip install --force-reinstall --no-deps matplotlib==3.11.1
+#    pip uninstall -y matplotlib matplotlib-inline
+#    pip install --no-cache-dir --force-reinstall matplotlib matplotlib-inline
+#
+# 2. tabm 是 TabM 表格模型包，若安装失败可从源码安装。
+#
+# 3. GPU 用户建议根据 CUDA 版本自行重装 torch：
+#    https://pytorch.org/get-started/locally/

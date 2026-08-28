@@ -10,8 +10,9 @@ from statistics import fmean, pstdev
 # ============================================================
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
+SN = "TLE00900CS1450457"
 
-TASK_FILE = ROOT_DIR / "data" / TARGET_AREA / "GPSdata" / "TLE00900CS1450449_data.json"
+TASK_FILE = ROOT_DIR / "data" / TARGET_AREA / "GPSdata" / f"{SN}_data.json"
 
 # 是否沿用原 validDownloadTask 的规则：
 # 当前任务必须是 102，并且按 actual_start_time 排序后的“下一个任务”不能是 104。
@@ -106,47 +107,97 @@ def sort_task_rt_message(task):
 
 
 # ============================================================
-# 删除值为 null 的字段
+# 删除存在空字段的整个任务
 # ============================================================
-def remove_null_fields(value):
+def is_empty_value(value):
     """
-    递归删除字典中 value 为 None（JSON 中的 null）的字段。
+    判断字段值是否为空。
 
-    例如：
-        {'altitude': None, 'speed': 2.3}
-    会变成：
-        {'speed': 2.3}
+    以下情况都视为“空”：
+    1) None（JSON 中的 null）
+    2) 空字符串或只包含空白字符的字符串
+    3) 空列表 []
+    4) 空字典 {}
 
-    注意：这里删除的是“字段”，不是整条 rt_message 记录。
-    返回 (清洗后的值, 删除字段数量)。
+    对非空 dict/list 会继续递归检查其内部字段，
+    因此嵌套结构中只要出现空值，也会判定为无效。
     """
+    if value is None:
+        return True
+
+    if isinstance(value, str):
+        return value.strip() == ""
+
     if isinstance(value, dict):
-        cleaned = {}
-        removed = 0
-
-        for key, item in value.items():
-            if item is None:
-                removed += 1
-                continue
-
-            cleaned_item, child_removed = remove_null_fields(item)
-            cleaned[key] = cleaned_item
-            removed += child_removed
-
-        return cleaned, removed
+        if not value:
+            return True
+        return any(is_empty_value(item) for item in value.values())
 
     if isinstance(value, list):
-        cleaned_list = []
-        removed = 0
+        if not value:
+            return True
+        return any(is_empty_value(item) for item in value)
 
-        for item in value:
-            cleaned_item, child_removed = remove_null_fields(item)
-            cleaned_list.append(cleaned_item)
-            removed += child_removed
+    return False
 
-        return cleaned_list, removed
 
-    return value, 0
+def task_has_empty_field(task):
+    """
+    判断整个任务是否存在空字段。
+
+    删除条件：
+    1) 与 rt_message 同级的任意原始任务字段为空；
+    2) rt_message 缺失、不是 list 或为空列表；
+    3) rt_message 中任意 GPS 记录的任意字段为空；
+    4) GPS 记录中的嵌套 dict/list 内部出现空值。
+
+    注意：
+    select_102_tasks() 后新增的 _order_index、_next_task_* 等辅助字段
+    不参与空值判断，避免辅助字段为 None 时误删任务。
+    """
+    if not isinstance(task, dict):
+        return True
+
+    # 检查与 rt_message 同级的原始任务字段。
+    for key, value in task.items():
+        # 跳过程序后续添加的辅助字段。
+        if str(key).startswith("_"):
+            continue
+
+        if key == "rt_message":
+            continue
+
+        if is_empty_value(value):
+            return True
+
+    # rt_message 本身必须存在、必须是非空列表。
+    gps = task.get("rt_message")
+    if not isinstance(gps, list) or len(gps) == 0:
+        return True
+
+    # 每条 GPS 必须是非空字典，且内部任意字段都不能为空。
+    for message in gps:
+        if not isinstance(message, dict) or len(message) == 0:
+            return True
+
+        if is_empty_value(message):
+            return True
+
+    return False
+
+
+def remove_tasks_with_empty_fields(rows):
+    """删除任务层或 rt_message 内部存在任意空字段的整个任务。"""
+    kept = []
+    removed = []
+
+    for row in rows:
+        if task_has_empty_field(row["task"]):
+            removed.append(row)
+        else:
+            kept.append(row)
+
+    return kept, removed
 
 
 # ============================================================
@@ -247,20 +298,17 @@ def remove_duration_outliers(selected):
 
 
 # ============================================================
-# 第三步：null 字段清洗 + 生成摘要
+# 第三步：生成摘要
 # ============================================================
 def clean_and_build_summary(rows):
     cleaned_tasks = []
     summary_rows = []
-    total_null_fields_removed = 0
 
     for row in rows:
         task = row["task"]
         duration = row["duration_seconds"]
 
-        cleaned_task, removed_count = remove_null_fields(task)
-        total_null_fields_removed += removed_count
-        cleaned_tasks.append(cleaned_task)
+        cleaned_tasks.append(task)
 
         summary_rows.append(
             {
@@ -274,14 +322,13 @@ def clean_and_build_summary(rows):
                 "sn": task.get("sn"),
                 "rt_message_count": len(task.get("rt_message") or []),
                 "rt_message_reordered": row["rt_message_reordered"],
-                "null_fields_removed": removed_count,
                 "next_task_id": task.get("_next_task_id"),
                 "next_task_type_id": task.get("_next_task_type_id"),
                 "next_task_start_time": task.get("_next_task_start_time"),
             }
         )
 
-    return cleaned_tasks, summary_rows, total_null_fields_removed
+    return cleaned_tasks, summary_rows
 
 
 # ============================================================
@@ -291,12 +338,8 @@ def build_output_paths(input_path: Path):
     out_dir = Path(OUTPUT_DIR) if OUTPUT_DIR else input_path.parent
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    stem = input_path.stem
-    if stem.endswith("_data"):
-        stem = stem[:-5]
-
-    base_name = f"{stem}最终有效卸货记录"
-    return out_dir / f"{base_name}.json",
+    base_name = f"{SN}最终有效卸货记录"
+    return out_dir / f"{base_name}.json"
 
 
 def write_json(path: Path, tasks):
@@ -335,7 +378,12 @@ def main():
         reordered_count,
     ) = select_102_tasks(tasks)
 
-    # 3) 根据任务持续时间删除异常长任务（mean + 3σ）
+    selected_before_null_check = len(selected)
+
+    # 3) 任务同级字段、rt_message 本身或 GPS 内部任意字段为空，都删除整个任务
+    selected, empty_field_tasks = remove_tasks_with_empty_fields(selected)
+
+    # 4) 根据任务持续时间删除异常长任务（mean + 3σ）
     (
         kept,
         duration_outliers,
@@ -344,10 +392,10 @@ def main():
         upper_limit,
     ) = remove_duration_outliers(selected)
 
-    # 4) 对最终保留任务递归删除 null 字段
-    cleaned_tasks, summary_rows, null_removed_count = clean_and_build_summary(kept)
+    # 5) 生成最终任务与摘要
+    cleaned_tasks, summary_rows = clean_and_build_summary(kept)
 
-    # 5) 输出完整 JSON，形式与 validDownloadTask 类似
+    # 6) 输出完整 JSON，形式与 validDownloadTask 类似
     write_json(out_json, cleaned_tasks)
 
     print("=" * 68)
@@ -355,7 +403,7 @@ def main():
     print("=" * 68)
     print(f"原始任务数：{len(tasks_sorted)}")
     print(f"102 任务总数：{task_102_count}")
-    print(f"按原 validDownloadTask 条件提取数：{len(selected)}")
+    print(f"按原 validDownloadTask 条件提取数：{selected_before_null_check}")
     print(f"rt_message 顺序发生调整的任务数：{reordered_count}")
 
     if mean_duration is None:
@@ -379,7 +427,11 @@ def main():
                 f"duration={duration / 60.0:.3f} 分钟"
             )
 
-    print(f"删除的 null 字段总数：{null_removed_count}")
+    print(f"因任务层或 GPS 内存在空字段而删除的任务数：{len(empty_field_tasks)}")
+    if empty_field_tasks:
+        print("因空字段删除的任务：")
+        for row in empty_field_tasks:
+            print(f"  task_id={row['task'].get('task_id')}")
     print(f"最终有效任务数：{len(cleaned_tasks)}")
     print(f"完整任务 JSON：{out_json}")
 
