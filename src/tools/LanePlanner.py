@@ -10,7 +10,7 @@ from pathlib import Path
 DEFAULT_SETTINGS = {
     "lane_type_ids": [101],          # 只读这些类型的车道。需要临时车道时改成 [101, 116]
     "use_temp_lane": True,
-    "connect_distance_threshold_m": 100.0,  # 车道连接距离阈值
+    "connect_distance_threshold_m": 150.0,  # 车道连接距离阈值
     "snap_candidate_top_k": 5,  # OD吸附车道备选数量
     "snap_max_distance_m": 100.0,  # OD吸附最大距离，超过警告
     "snap_distance_penalty_factor": 5.0,  # OD吸附惩罚因子

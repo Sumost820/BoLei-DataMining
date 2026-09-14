@@ -48,7 +48,7 @@ from src.tools.RouteSampler import make_gps_altitude_estimator, sample_route_rec
 # 1. 配置
 # =============================================================================
 
-TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
+TARGET_AREA = "TianChi"  # "JiangYi" or "TianChi"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 TASK_DATA_DIR = PROJECT_ROOT / "data" / TARGET_AREA / "FinalData"
 TASK_FILE_GLOB = "*.json"
@@ -1152,6 +1152,7 @@ def main() -> None:
     if not tasks:
         raise RuntimeError("未读取到任务。")
     print(f"任务数量：{len(tasks)}")
+    print(f"警告数量：{len(warnings)}")
 
     print("[2/5] 初始化 LanePlanner……")
     planner_settings = deepcopy(DEFAULT_SETTINGS)
