@@ -6,11 +6,12 @@ from pathlib import Path
 # 配置：修改这里
 # ============================================================
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
-SN = "TLE01000AT1450973"
+TARGET_AREA = "TianChi"  # "JiangYi" or "TianChi"
+SN = "TLE00900VR1450048"
+DATA_TYPE = "data2"
 
-INPUT_JSON = ROOT_DIR / "data" / TARGET_AREA / "CheckedData" / f"{SN}最终有效卸货记录.json"
-OUTPUT_JSON = ROOT_DIR / "data" / TARGET_AREA / "FinalData" / f"{SN}最终有效卸货记录-删除后.json"
+INPUT_JSON = ROOT_DIR / "data" / TARGET_AREA / "CheckedData" / f"{SN}_{DATA_TYPE}有效卸货记录.json"
+OUTPUT_JSON = ROOT_DIR / "data" / TARGET_AREA / "FinalData" / f"{SN}_{DATA_TYPE}有效卸货记录-删除后.json"
 
 def load_tasks(path: Path):
     """
