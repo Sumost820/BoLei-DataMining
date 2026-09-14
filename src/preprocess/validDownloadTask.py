@@ -9,10 +9,12 @@ from statistics import fmean, pstdev
 # 配置：通常只需要修改这里
 # ============================================================
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
-SN = "TLE00900CS1450457"
+TARGET_AREA = "TianChi"  # "JiangYi" or "TianChi"
+SN = "TLE00900VR1450048"
+data = "data3"
+print(ROOT_DIR)
 
-TASK_FILE = ROOT_DIR / "data" / TARGET_AREA / "GPSdata" / f"{SN}_data.json"
+TASK_FILE = ROOT_DIR / "data" / TARGET_AREA / "GPSdata" / f"{SN}_{data}.json"
 
 # 是否沿用原 validDownloadTask 的规则：
 # 当前任务必须是 102，并且按 actual_start_time 排序后的“下一个任务”不能是 104。
@@ -338,7 +340,7 @@ def build_output_paths(input_path: Path):
     out_dir = Path(OUTPUT_DIR) if OUTPUT_DIR else input_path.parent
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    base_name = f"{SN}最终有效卸货记录"
+    base_name = f"{SN}_{data}有效卸货记录"
     return out_dir / f"{base_name}.json"
 
 

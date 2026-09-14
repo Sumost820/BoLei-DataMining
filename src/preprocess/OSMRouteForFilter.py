@@ -10,12 +10,13 @@ import folium
 # 配置：通常只需要修改这里
 # ============================================================
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
-SN = "TLE01000AT1450973"
+TARGET_AREA = "TianChi"  # "JiangYi" or "TianChi"
+SN = "TLE00900VR1450048"
+DATA = "data3"
 
-TASK_FILE = ROOT_DIR / "data" / TARGET_AREA / "CheckedData" / f"{SN}最终有效卸货记录.json"
+TASK_FILE = ROOT_DIR / "data" / TARGET_AREA / "CheckedData" / f"{SN}_{DATA}有效卸货记录.json"
 RESOURCE_FILE = ROOT_DIR / "data" / TARGET_AREA / "MapResource.json"
-OUTPUT_HTML = ROOT_DIR / "data" / TARGET_AREA / "CheckedData" / f"{SN}矿车路线地图.html"
+OUTPUT_HTML = ROOT_DIR / "data" / TARGET_AREA / "CheckedData" / f"{SN}_{DATA}矿车路线地图.html"
 
 # 抽稀参数：数值越大越精细，HTML 越大
 MAX_POINTS_PER_TASK = 1200

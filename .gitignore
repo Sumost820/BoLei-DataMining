@@ -1,2 +1,2 @@
-# 忽略 target 目录（构建产物目录）
-target/
+target/   # 忽略 target 目录
+/data/    # 忽略 data 目录
