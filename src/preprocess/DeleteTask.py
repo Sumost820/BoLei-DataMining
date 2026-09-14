@@ -7,7 +7,7 @@ from pathlib import Path
 # ============================================================
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 TARGET_AREA = "JiangYi"  # "JiangYi" or "TianChi"
-SN = "TLE00900CS1450457"
+SN = "TLE01000AT1450973"
 
 INPUT_JSON = ROOT_DIR / "data" / TARGET_AREA / "CheckedData" / f"{SN}最终有效卸货记录.json"
 OUTPUT_JSON = ROOT_DIR / "data" / TARGET_AREA / "FinalData" / f"{SN}最终有效卸货记录-删除后.json"
@@ -154,6 +154,8 @@ def save_result(original_data, cleaned_tasks, mode, output_path: Path):
     """
     按原始 JSON 顶层结构保存结果。
     """
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
     if mode == "list":
         output_data = cleaned_tasks
 
